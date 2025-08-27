@@ -1,0 +1,7 @@
+[nvidia]
+name=Nvidia packages for Enterprise Linux 9 - $basearch
+baseurl=https://developer.download.nvidia.com/compute/cuda/repos/rhel9/$basearch/
+enabled=1
+gpgcheck=1
+countme=1
+gpgkey=file:///etc/pki/rpm-gpg/RPM-GPG-KEY-NVIDIA
