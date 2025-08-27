@@ -1,8 +1,8 @@
 # NVIDIA Drivers for OKD SCOS (ostree-native container)
 
-This repository builds an **ostree-native container image** for OKD 4.18 SCOS that bakes in the NVIDIA open-kernel modules and userspace libraries. It layers packages into the SCOS base using `rpm-ostree` and commits them via `ostree container commit`, producing an image you can roll out to SCOS nodes.
+This repository builds an **ostree-native container image** for OKD 4.x SCOS that bakes in the NVIDIA open-kernel modules and userspace libraries. It layers packages into the SCOS base using `rpm-ostree` and commits them via `ostree container commit`, producing an image you can roll out to SCOS nodes.
 
-> Target: **OKD 4.18** (SCOS 4.18.0-okd-scos.10) • **CentOS Stream 9** userspace • **NVIDIA open kernel modules (DKMS)**
+> Target: **OKD 4.18** • **CentOS Stream 9** userspace • **NVIDIA open kernel modules (DKMS)**
 
 ## What this image does
 
@@ -12,14 +12,33 @@ This repository builds an **ostree-native container image** for OKD 4.18 SCOS th
 - Installs NVIDIA userspace (CUDA driver libs, tools like `nvidia-smi`, `nvidia-settings`, etc.)
 - Commits the filesystem as an **ostree native container** so it can be used as the node OS
 
-### Inputs explained
+### Packages Versions
 
-- **Kernel selection**  
+- **Kernel version**  
   The build detects the **latest** `kernel.x86_64` from CentOS Stream 9 at build time and pins it via `rpm-ostree override replace`.  
   The NVIDIA DKMS modules are compiled specifically for that kernel ABI.
 
 - **NVIDIA driver version**  
   The driver version is also the **latest** `kmod-nvidia-open-dkms` from CentOS Stream 9 at build time.
+
+
+## Build
+
+In order to build the image first set the correct OKD version in `Dockerfile`
+so that it is the same as in your cluster. Then build it with the following command
+```
+docker build -t <your-container-registry>/okd-nvidia-image:<version> .
+```
+where `<your-container-registry>` is the name of the registry used in your OKD cluster.
+Then push the image using the following command
+```
+docker push <your-container-registry>/okd-nvidia-image:<version>
+```
+
+If you are pushing to the OKD internal registry you might need to login first (run `oc login --web` if the cli is not yet authenticated)
+```
+docker login -u $(oc whoami) -p $(oc whoami --show-token)
+```
 
 ## Deploy (OKD / SCOS)
 
@@ -57,7 +76,7 @@ metadata:
   name: os-layer-custom-nvidia-drivers
   namespace:
 spec:
-  osImageURL: ghcr.io/datalabhell/okd-nvidia-image:<version>
+  osImageURL: <your-container-registry>/okd-nvidia-image:<version>
 ```
 
 ## Verifying on a node
