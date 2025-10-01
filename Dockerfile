@@ -1,4 +1,4 @@
-FROM quay.io/okd/scos-content:4.18.0-okd-scos.10-stream-coreos
+FROM quay.io/okd/scos-content:4.19.0-okd-scos.19-stream-coreos
 
 COPY D42D0685.pub /etc/pki/rpm-gpg/RPM-GPG-KEY-NVIDIA
 COPY nvidia.repo /etc/yum.repos.d/nvidia.repo
